@@ -472,6 +472,7 @@ namespace iTextSharp.text.pdf
             }
             SignatureAppearance.PreClose();
             PdfSigGenericPkcs sig = SignatureAppearance.SigStandard;
+
             PdfLiteral lit = (PdfLiteral)sig.Get(PdfName.Contents);
             int totalBuf = (lit.PosLength - 2) / 2;
             byte[] buf = new byte[8192];
@@ -481,6 +482,7 @@ namespace iTextSharp.text.pdf
             {
                 sig.Signer.Update(buf, 0, n);
             }
+            
             buf = new byte[totalBuf];
             byte[] bsig = sig.SignerContents;
             Array.Copy(bsig, 0, buf, 0, bsig.Length);

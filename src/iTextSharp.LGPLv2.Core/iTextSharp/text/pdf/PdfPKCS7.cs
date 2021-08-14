@@ -851,9 +851,9 @@ namespace iTextSharp.text.pdf
         /// Gets the bytes for the PKCS7SignedData object.
         /// </summary>
         /// <returns>the bytes for the PKCS7SignedData object</returns>
-        public byte[] GetEncodedPkcs7()
+        public byte[] GetEncodedPkcs7(ITsaClient tsaClient)
         {
-            return GetEncodedPkcs7(null, DateTime.Now, null, null);
+            return GetEncodedPkcs7(null, DateTime.Now, tsaClient, null);
         }
 
         /// <summary>

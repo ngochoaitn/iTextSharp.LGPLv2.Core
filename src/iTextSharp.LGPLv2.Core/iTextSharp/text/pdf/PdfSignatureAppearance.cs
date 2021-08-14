@@ -1031,7 +1031,7 @@ namespace iTextSharp.text.pdf
                 if (Contact != null)
                     SigStandard.Contact = Contact;
                 SigStandard.Put(PdfName.M, new PdfDate(SignDate));
-                SigStandard.SetSignInfo(PrivKey, CertChain, CrlList);
+                SigStandard.SetSignInfo(PrivKey, CertChain, CrlList, this.TsaClient);
                 PdfString contents = (PdfString)SigStandard.Get(PdfName.Contents);
                 PdfLiteral lit = new PdfLiteral((contents.ToString().Length + (PdfName.AdobePpklite.Equals(Filter) ? 0 : 64)) * 2 + 2);
                 _exclusionLocations[PdfName.Contents] = lit;
@@ -1123,6 +1123,8 @@ namespace iTextSharp.text.pdf
             }
         }
 
+        public ITsaClient TsaClient { get; set; }
+
         /// <summary>
         /// Sets the cryptographic parameters.
         /// </summary>
@@ -1130,12 +1132,13 @@ namespace iTextSharp.text.pdf
         /// <param name="certChain">the certificate chain</param>
         /// <param name="crlList">the certificate revocation list. It may be  null </param>
         /// <param name="filter">the crytographic filter type. It can be SELF_SIGNED, VERISIGN_SIGNED or WINCER_SIGNED</param>
-        public void SetCrypto(ICipherParameters privKey, X509Certificate[] certChain, object[] crlList, PdfName filter)
+        public void SetCrypto(ICipherParameters privKey, X509Certificate[] certChain, object[] crlList, PdfName filter, ITsaClient tsaClient = null)
         {
             PrivKey = privKey;
             CertChain = certChain;
             CrlList = crlList;
             Filter = filter;
+            this.TsaClient = tsaClient;
         }
 
         /// <summary>

@@ -71,9 +71,11 @@ namespace iTextSharp.text.pdf
                 if (PdfName.AdbeX509RsaSha1.Equals(Get(PdfName.Subfilter)))
                     return Pkcs.GetEncodedPkcs1();
                 else
-                    return Pkcs.GetEncodedPkcs7();
+                    return Pkcs.GetEncodedPkcs7(_tsaClient);
             }
         }
+
+        public ITsaClient _tsaClient { get; set; }
 
         /// <summary>
         /// Sets the digest/signature to an external calculated value.
@@ -96,9 +98,11 @@ namespace iTextSharp.text.pdf
         /// <param name="privKey">the private key</param>
         /// <param name="certChain">the certificate chain</param>
         /// <param name="crlList">the certificate revocation list. It can be  null </param>
-        public void SetSignInfo(ICipherParameters privKey, X509Certificate[] certChain, object[] crlList)
+        public void SetSignInfo(ICipherParameters privKey, X509Certificate[] certChain, object[] crlList, ITsaClient tsaClient)
         {
+            _tsaClient = tsaClient;
             Pkcs = new PdfPkcs7(privKey, certChain, crlList, HashAlgorithm, PdfName.AdbePkcs7Sha1.Equals(Get(PdfName.Subfilter)));
+            
             Pkcs.SetExternalDigest(_externalDigest, _externalRsAdata, _digestEncryptionAlgorithm);
             if (PdfName.AdbeX509RsaSha1.Equals(Get(PdfName.Subfilter)))
             {
@@ -112,7 +116,7 @@ namespace iTextSharp.text.pdf
                 Contents = Pkcs.GetEncodedPkcs1();
             }
             else
-                Contents = Pkcs.GetEncodedPkcs7();
+                Contents = Pkcs.GetEncodedPkcs7(tsaClient);
             name = PdfPkcs7.GetSubjectFields(Pkcs.SigningCertificate).GetField("CN");
             if (name != null)
                 Put(PdfName.Name, new PdfString(name, TEXT_UNICODE));
